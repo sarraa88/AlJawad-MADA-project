@@ -1,14 +1,11 @@
 # raw-data
 
-This folder should contain all raw data. As needed add sub-folders.
 
-Currently, as an example, it contains a simple made-up data-set in an Excel file.
+This folder contains the original dataset used for the lung cancer risk analysis.
 
-The dataset contains the variables `Height`, `Weight` and `Gender` of a few imaginary individuals.
+- `lung_cancer.csv`  
+  Original dataset provided for the project.
 
-The dataset purposefully contains some faulty entries that need to be cleaned.
+This file is not modified directly. All cleaning and processing steps are performed using scripts in `code/processing-code/`.
 
-Generally, any dataset should contain some meta-data explaining what each variable in the dataset is. (This is often called a **Codebook**.) For this simple example, the codebook is given as a second sheet in the Excel file.
-
-This raw data-set should generally not be edited by hand. It should instead be loaded and processed/cleaned using code.
-
+The cleaned dataset is saved in `data/processed-data/`.

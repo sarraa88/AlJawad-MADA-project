@@ -16,6 +16,9 @@ csl: ../../assets/american-journal-of-epidemiology.csl
 # load a few R packages
 library(here)
 library(knitr)
+library(dplyr)
+library(flextable)
+
 ```
 
 
@@ -25,16 +28,8 @@ Saraa Al Jawad
 
 **Author affiliations**  
 
-1. College of Public Health, University of Georgia, Athens, GA, USA.
-2. Another Affiliation, Athens, GA, USA.
-3. Yet another Affiliation.
+1. Institute of Bioinformatics, University of Georgia, Athens, GA, USA.
 
-$*$ These authors contributed equally to this work.
-
-$\land$ Corresponding author: some@email.com
-
-$\dagger$ Disclaimer: The opinions expressed in this article are the
-author's own and don't reflect their employer.
 
 
 {{< pagebreak >}}
@@ -42,13 +37,8 @@ author's own and don't reflect their employer.
 
 
 # Summary/Abstract
-_Write a summary of your project._
 
-_It is recommended to use a structured abstract with Background/Methods/Results/Discussion sections._
-
-*I will just draft summary about the purpose of this project* *Still In progress*
-
-Lung cancer remains one of the leading causes of cancer-related mortality worldwide, with age and smoking exposure recognized as major risk factors. Understanding how these factors contribute to lung cancer risk is essential for improving prevention strategies and risk assessment. In this study, we examine the relationship between age, cumulative smoking exposure, and lung cancer risk using a structured data analysis approach in R. Exploratory data analysis will be performed to evaluate distributions, trends, and potential associations among variables, followed by statistical modeling to assess the independent and combined effects of age and smoking exposure on lung cancer outcomes. This analysis aims to determine whether increasing age and greater cumulative smoking exposure are associated with elevated lung cancer risk and to assess the relative strength of these factors.
+Lung cancer remains one of the leading causes of cancer-related mortality worldwide, with age and smoking exposure recognized as major risk factors. Understanding how these factors contribute to lung cancer risk is essential for improving prevention strategies and risk assessment. In this study, we examine the relationship between age, cumulative smoking exposure, and lung cancer risk using a structured data analysis approach in R. Exploratory data analysis was performed to evaluate distributions, trends, and potential associations among variables, followed by statistical modeling to assess the independent and combined effects of age and smoking exposure on lung cancer outcomes. This analysis aims to determine whether increasing age and greater cumulative smoking exposure are associated with elevated lung cancer risk and to assess the relative strength of these factors.
 
 {{< pagebreak >}}
 
@@ -56,21 +46,17 @@ Lung cancer remains one of the leading causes of cancer-related mortality worldw
 # Introduction 
 
 ## General Background Information
-_Provide enough background on your topic that others can understand the why and how of your analysis_ 
-
-*Summary intro_draft* *IN PROGRESS*
-
 Lung cancer is one of the leading causes of cancer-related mortality worldwide and remains a major public health concern. Despite advances in screening and treatment, lung cancer often presents at advanced stages, leading to poor prognosis and high mortality rates. Identifying and understanding key risk factors is therefore essential for prevention efforts and early risk assessment.
 
-Age and smoking exposure are well-established risk factors for lung cancer. Risk increases with age due to cumulative biological changes and prolonged exposure to environmental carcinogens. Smoking exposure, particularly cumulative exposure over time, is strongly associated with lung cancer development and is considered the primary preventable risk factor. Examining these variables together allows for a clearer understanding of how they both contribute to disease risk.
+Approximately 85% of lung cancer cases occur in current or former smokers, underscoring the dominant role of tobacco exposure in disease development. Long-term cigarette smokers have been shown to face substantial cumulative risk of lung cancer by older ages, highlighting the strong dose–response relationship between smoking exposure and disease risk. Beyond smoking alone, risk prediction research has emphasized the importance of incorporating additional clinical and environmental factors to better estimate individual susceptibility. These findings support the need for structured risk assessment approaches that evaluate both smoking history and other relevant predictors when examining lung cancer risk [@spitz2007].
 
+Age and smoking exposure are well-established risk factors for lung cancer. Risk increases with age due to cumulative biological changes and prolonged exposure to carcinogens over time. Similarly, greater cumulative smoking exposure is strongly associated with increased lung cancer incidence and remains the primary preventable risk factor. Examining these variables together allows for a clearer understanding of how they both contribute to disease risk.
 
 
 ## Description of data and data source
-_Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+The data used in this analysis consist of individual-level observations on lung cancer risk factors and disease status. The dataset contains 5,000 observations and 30 variables, including demographic characteristics, smoking-related variables, and clinical indicators.
 
-
-The data used in this project were obtained from a publicly available dataset related to lung cancer risk factors. The dataset contains individual-level observations including demographic information and smoking-related variables relevant to lung cancer outcomes. Key variables that will be used in this analysis include age, cumulative smoking exposure, and lung cancer status.
+The primary variables of interest for this study are age, cumulative smoking exposure (pack-years), and lung cancer status. Additional variables such as smoking status and chronic obstructive pulmonary disease (COPD) are included for descriptive purposes.
 
 
 
@@ -84,8 +70,6 @@ lung_data <- read.csv(
 ```
 
 ## Questions/Hypotheses to be addressed
-
-
 The primary research question of this analysis is whether age and cumulative smoking exposure are associated with lung cancer risk.This project seeks to examine how lung cancer risk varies across different age groups and levels of smoking exposure.
 
 The main hypotheses are:
@@ -100,43 +84,64 @@ The main hypotheses are:
 
 # Methods 
 
-_Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement._
-
-*Still In progress_this is just simple draft of planned analysis no details yet*
 
 ## Planned analysis approach
-
-The analysis will begin with exploratory data analysis to examine the distributions of key variables and identify potential patterns or relationships between age, smoking exposure, and lung cancer status. Summary statistics and simple visualizations will be used to better understand the data and assess data quality.
+Exploratory data analysis was conducted to examine the distributions of key variables and identify potential patterns or relationships between age, smoking exposure, and lung cancer status. Summary statistics and simple visualizations were used to better understand the data and assess data quality.
 
 Following exploratory analysis, statistical modeling approaches will be applied to evaluate the association between age, smoking exposure, and lung cancer risk. Models will be used to assess the independent and combined effects of these predictors on lung cancer outcomes. Additional variables in the dataset may be considered in extended analyses as the project progresses, particularly in later stages of the course when multivariate and machine learning methods are introduced.
 
 
-## Schematic of workflow
-
-Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). @fig-schematic is an example of some - completely random/unrelated - schematic that was generated with BioRender.
-We store those figures in the `assets` folder.
-
-```{r}
-#| label: fig-schematic
-#| fig-cap: "A figure that is manually generated and shows some overview/schematic. This has nothing to do with the data, it's just a random one from one of our projects I found and placed here."
-#| echo: FALSE
-knitr::include_graphics(here("assets","antigen-recognition.png"))
-```
-
-
-
-
 ## Data acquisition
-_As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next._
+The dataset used in this analysis was obtained from a publicly available online source and downloaded in CSV format. The dataset contains individual-level information on lung cancer risk factors and disease status, including demographic and smoking-related variables.
 
 
 ## Data import and cleaning
-_Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along._
+The dataset was imported from a CSV file stored in the project repository. Basic cleaning steps were performed to ensure key variables were in the correct format for analysis. Specifically, age and cumulative smoking exposure (pack-years) were converted to numeric variables, and lung cancer status, smoking status, and COPD were treated as categorical variables (factors). The cleaned dataset was used for all descriptive summaries and figures.
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| results: false
+
+library(here)
+library(dplyr)
+
+lung_data <- read.csv(here("data", "raw-data", "lung_cancer.csv"))
+
+lung_data <- lung_data %>%
+  mutate(
+    age = as.numeric(age),
+    pack_years = as.numeric(pack_years),
+    lung_cancer_risk = as.factor(lung_cancer_risk),
+    smoker = as.factor(smoker),
+    copd = as.factor(copd)
+  )
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| results: false
+
+# check missing values in key variables
+lung_data %>% summarise(
+  missing_age = sum(is.na(age)),
+  missing_pack_years = sum(is.na(pack_years)),
+  missing_outcome = sum(is.na(lung_cancer_risk))
+)
+
+# confirm variable types
+lung_data %>% select(age, pack_years, lung_cancer_risk, smoker, copd) %>% str()
+```
 
 
 ## Statistical analysis
-_Explain anything related to your statistical analyses._
+At this stage of the project, the primary focus was on data cleaning and exploratory analysis. Descriptive statistics and graphical methods were used to examine distributions and identify potential relationships between lung cancer risk, age, and cumulative smoking exposure.
 
+Formal statistical modeling, including logistic regression to evaluate independent and combined effects of predictors on lung cancer risk, will be conducted in subsequent stages of the project.
 
 {{< pagebreak >}}
 
@@ -144,51 +149,133 @@ _Explain anything related to your statistical analyses._
 # Results
 
 ## Exploratory/Descriptive analysis
+@tbl-summarytable summarizes the key characteristics of participants stratified by lung cancer risk.
+Individuals with lung cancer were slightly older (median age 56 years) compared to those without lung cancer (median age 54 years). The interquartile ranges of age were nearly identical between groups, indicating comparable variability in age distribution.
 
-_Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project._
+Smoking exposure differed substantially between groups. The median cumulative smoking exposure (pack-years) among individuals without lung cancer was 0, whereas individuals with lung cancer had a median of 19 pack-years. This indicates markedly higher lifetime smoking exposure among those with lung cancer.
 
+The proportion of smokers was considerably higher in the lung cancer group compared to the non-cancer group. Similarly, the prevalence of chronic obstructive pulmonary disease (COPD) was substantially greater among individuals with lung cancer. 
 
-@tbl-summarytable shows a summary of the data.
-
-Note the loading of the data providing a **relative** path using the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path. You can also use the `here` R package to create paths. See examples of that below. I generally recommend the `here` package.
+Overall, smoking-related variables demonstrated more pronounced differences between groups than age alone.
 
 ```{r}
 #| label: tbl-summarytable
-#| tbl-cap: "Data summary table."
+#| tbl-cap: "Summary of key variables by lung cancer risk."
 #| echo: FALSE
-resulttable <- readRDS("../../results/tables/summarytable.rds")
-knitr::kable(resulttable)
+
+tbl <- readRDS(here("results","tables","summarytable.rds"))
+
+
+tbl <- tbl %>%
+  rename(
+    Risk = lung_cancer_risk,
+    N = n,
+    `Median Age` = median_age,
+    `IQR Age` = IQR_age,
+    `Median Pack-Years` = median_pack_years,
+    `IQR Pack-Years` = IQR_pack_years,
+    `% Smokers` = percent_smokers,
+    `% COPD` = percent_COPD
+  ) %>%
+  mutate(
+    `% Smokers` = round(`% Smokers`, 2),
+    `% COPD` = round(`% COPD`, 2)
+  )
+
+ft <- flextable(tbl)
+
+
+ft <- set_header_labels(
+  ft,
+  `Median Pack-Years` = "Median\nPack-Years",
+  `IQR Pack-Years` = "IQR\nPack-Years",
+  `% Smokers` = "%\nSmokers",
+  `% COPD` = "%\nCOPD"
+)
+
+
+ft <- fontsize(ft, size = 9, part = "all")
+ft <- bold(ft, part = "header")
+ft <- align(ft, align = "center", part = "all")
+ft <- autofit(ft)
+
+
+ft <- width(ft, j = 1, width = 0.6)  # Risk
+ft <- width(ft, j = 2, width = 0.6)  # N
+ft <- width(ft, j = 3, width = 0.8)  # Median Age
+ft <- width(ft, j = 4, width = 0.7)  # IQR Age
+ft <- width(ft, j = 5, width = 1.0)  # Median Pack-Years
+ft <- width(ft, j = 6, width = 0.9)  # IQR Pack-Years
+ft <- width(ft, j = 7, width = 0.8)  # % Smokers
+ft <- width(ft, j = 8, width = 0.7)  # % COPD
+
+ft
 ```
 
 
+```{r}
+#| label: fig-agebox
+#| fig-cap: "Age distribution by lung cancer risk."
+#| echo: FALSE
+#| out-width: "65%"
+
+knitr::include_graphics(
+  here("results","figures","age_box.png")
+)
+```
+
+@fig-agebox illustrates the distribution of age by lung cancer risk. Although there is overlap between groups, the median age appears slightly higher among individuals with lung cancer. The overall spread of ages is comparable across both groups.
+
+```{r}
+#| label: fig-packyears
+#| fig-cap: "Cumulative smoking exposure (pack-years) by lung cancer risk."
+#| echo: FALSE
+#| out-width: "65%"
+
+knitr::include_graphics(
+  here("results","figures","packyears_box.png")
+)
+```
+
+@fig-packyears shows the distribution of cumulative smoking exposure by lung cancer risk. Individuals with lung cancer demonstrate substantially higher pack-years compared to those without lung cancer. The non-cancer group shows a large proportion of individuals with zero pack-years, whereas the lung cancer group exhibits a broader distribution with higher median exposure.
+
+```{r}
+#| label: fig-agepack-scatter
+#| fig-cap: "Relationship between age and pack-years by lung cancer risk."
+#| echo: FALSE
+#| message: FALSE
+#| warning: FALSE
+#| out-width: "65%"
+
+knitr::include_graphics(here("results","figures","age_vs_packyears_scatter.png"))
+```
+
+@fig-agepack-scatter displays age versus cumulative smoking exposure stratified by lung cancer risk. Cumulative smoking exposure tends to increase with age, reflecting accumulation of tobacco exposure over time. Individuals with lung cancer cluster at higher levels of cumulative smoking exposure across a wide range of ages, suggesting that smoking exposure may better differentiate lung cancer cases from non-cases than age alone.
+
+```{r}
+#| label: fig-smoking
+#| fig-cap: "Percentage of smokers by lung cancer risk."
+#| echo: FALSE
+#| out-width: "65%"
+
+knitr::include_graphics(
+  here("results","figures","smoking_proportion.png")
+)
+```
+
+@fig-smoking shows the percentage of smokers by lung cancer risk. In this dataset, all individuals classified as having lung cancer were smokers, whereas approximately 27% of individuals without lung cancer were smokers. This indicates a strong association between smoking status and lung cancer in the dataset.
 
 ## Basic statistical analysis
 
 _To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p<0.05 means statistical significance" interpretation is not valid._
 
 
-@fig-result shows a scatterplot figure produced by one of the R scripts.
-
-```{r}
-#| label: fig-result
-#| fig-cap: "Height and weight stratified by gender."
-#| echo: FALSE
-knitr::include_graphics(here("results","figures","height-weight-stratified.png"))
-```
-
 
 ## Full analysis
 
 _Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
 
-Example @tbl-resulttable2 shows a summary of a linear model fit.
 
-```{r}
-#| label: tbl-resulttable2
-#| tbl-cap: "Linear model fit table."
-#| echo: FALSE
-resulttable2 <- readRDS(here("results","tables","resulttable2.rds"))
-knitr::kable(resulttable2)
 ```
 
 
@@ -206,13 +293,6 @@ _Discuss what you perceive as strengths and limitations of your analysis._
 ## Conclusions
 _What are the main take-home messages?_
 
-_Include citations in your Qmd file using BibTeX, the list of references will automatically be placed at the end_
-
-This paper [@leek2015] discusses types of analyses. 
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
-
-Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your BibTeX reference file in the YAML. You can call your reference file anything you like.
 
 
 {{< pagebreak >}}
@@ -220,7 +300,7 @@ Note that this cited reference will show up at the end of the document, the refe
 
 # Supplementary materials
 
-The raw data used in this analysis are stored in the project repository under `data/raw-data/`.
+The raw data used in this analysis are stored in the project repository under `data/raw-data/`. All data processing, cleaning, and exploratory analyses were conducted using reproducible R scripts located in the `code/` directory. 
 
 
 # References

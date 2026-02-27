@@ -1,68 +1,88 @@
 
-This is Saraa Al-Jawad’s MADA class project repository.
+# Lung Cancer Risk Analysis  
+Saraa Al-Jawad  
+Modern Applied Data Analysis (MADA)
 
-# Overview
-A template file and folder structure for a data analysis project/paper done with R/Quarto/GitHub.
+This repository contains my cumulative course project in Dr. Andreas Handel's Modern Applied Data Analysis course.
+
+## Project Overview
+
+This project investigates factors associated with lung cancer risk using a dataset of 5,000 individuals.
+
+The dataset contains demographic, clinical, and smoking-related variables.  
+
+The project includes:
+
+- Data cleaning and preprocessing
+- Exploratory data analysis (EDA)
+- Descriptive and statistical modeling
+- Fully reproducible workflow implementation
+
+The goal is to examine potential associations between lung cancer and relevant predictors in a fully reproducible workflow.
 
 
 
 # Pre-requisites
 
-This is a template for a data analysis project using R, Quarto, GitHub and a reference manager that can handle BibTeX. Our recommendation for the reference manager is Zotero, with the Better BibTeX plugin/extension. It is also assumed that you have a word processor installed (e.g. MS Word or [LibreOffice](https://www.libreoffice.org/)). You need that software stack to make use of this template. To produce PDF output, you need a TeX distribution installed. You can use TinyTeX, following [these instructions.](https://quarto.org/docs/output-formats/pdf-basics.html)
+This is using R, Quarto, GitHub and a reference manager that can handle BibTeX. Our recommendation for the reference manager is Zotero, with the Better BibTeX plugin/extension. It is also assumed that you have a word processor installed (e.g. MS Word or [LibreOffice](https://www.libreoffice.org/)). You need that software stack to make use of this template. To produce PDF output, you need a TeX distribution installed. You can use TinyTeX, following [these instructions.](https://quarto.org/docs/output-formats/pdf-basics.html)
 
 
-# Template structure and content
+## Repository Structure
 
-The template comes with a folder structure and example files to illustrate the kinds of content you would place in the different folders. The following is a brief description of the contents. See the `readme` files in each folder for more details.
+### `data/`
+Contains the raw and processed datasets.
 
-* The `assets` folder contains files that are manually generated schematics/diagrams, BibTeX files, CSL style files, PDFs of references, and other such content. Basically add anything that needs to be part of your project but that doesn't fit into the other categories.
+- `raw-data/`
+  - Where you can find the original dataset, not modified.
+- `processed-data/`
+  - Cleaned dataset created by the processing scripts.
 
-* All code goes into the `code` folder and subfolders. Currently, there are 3 sub-folders that do different parts of an analysis. You can re-organize such that it makes most sense for your project. The folders contain small example files that do some data cleaning and analysis to illustrate the overall setup and workflow. See the readme files in those folders for details.
+Each dataset can be regenerated using scripts in the `code/` folder.
 
-* All data goes into the `data` folder and subfolders. Currently, there are 2 sub-folders that contain different versions of a simple example data set. You can re-organize such that it makes most sense for your project. 
+---
 
-* The `products` folder and its subfolders should contain all _deliverables_, such as reports, manuscripts, presentations, posters, Shiny web apps, etc. Those should generally be made with Quarto/R. As needed, other formats can be used. A few examples are provided.
-  - The  `manuscript` subfolder contains a template for a report written as Quarto file. If you access this repository as part of the [Modern Applied Data Science course](https://andreashandel.github.io/MADAcourse/), the sections are guides for your project. If you found your way to this repository outside the course, you might only be interested in seeing how the file pulls in results and references and generates a word document as output, without paying attention to the detailed structure. There is also a sub-folder containing an example for a supplementary material file.
-  - The `poster` subfolder is a placeholder for a future Quarto based poster. See more comments in that readme. 
-  - The `report` subfolder contains an example of an HTML-formatted report. It's basically the same as the manuscript, but a different output format.
-  - The `presentation` subfolder contains a basic example of slides made with Quarto.
-  
+### `code/`
 
-* The `results` folder should contain all automatically/code generated output. This includes figures, tables, results from analyses that are later used in figures or tables, and other outputs. It is generally recommended to save objects, including tables, as serialized R data (`.Rds`) files. Other formats, e.g. `.csv` for tables, can be useful for use downstream and should be used as needed. All content in these folders should be automatically generated by code. Manually generated results should be avoided as much as possible. If absolutely necessary, they go into the `assets` folder.
+Contains all code used in this project.
 
+- `processing-code/`
+  - To loads and cleans the raw dataset.
+- `eda-code/`
+  - To produces summary tables and exploratory figures.
+- `analysis-code/`
+  - For statistical modeling scripts.
 
-* There are multiple special files in the repo.
-  * `readme.md`: this file contains instructions or details about the folder it
-  is located in. You are reading the project-level `readme.md` file right now. There is a `readme` in almost every folder.
-  * `data-analysis-template.Rproj` is a file that tells RStudio that this is the main folder for a project. Rename if you want.
-  * a few "hidden" files and folders (they start with a `.` and depending on how your OS is configured, you might not see them). You can probably ignore them.
+Each subfolder also includes a `README.md` describing purpose and workflow.
 
+---
 
+### `results/`
 
+Contains code-generated output:
 
-# Naming conventions
+- Figures (`.png`, `.pdf`)
+- Tables (`.rds`, `.csv`)
+- Intermediate saved objects
 
-We try to follow these naming conventions for folders and files: 
+All files in this folder are produced by code.
 
-* Somewhat descriptive and easy to understand names.
-* Only lower-case letters (and numbers if needed). Words separated by a `-`. 
+---
 
-For instance there is a folder called `analysis-code` with a file called `statistical-analysis.R` in it. We don't use `_` or blank spaces for separators. We also don't use CamelCase, only lower-case. Exceptions are made for standard file names or endings, for instance R scripts end in `.R` (instead of `.r`).
+### `products/`
 
+Contains finalized outputs of the project:
 
-# Package management
-
-The package [renv](https://rstudio.github.io/renv/index.html) helps to  manage R packages and increase chances of future reproducibility. Unfortunately, it creates some extra complexity and causes sometimes problems, especially for packages that are not on CRAN.
-
-You can decide to implement `renv` or not. This can happen at any stage, though earlier in the project is generally better.
-
-If you plan to use `renv`, start by reading [the introduction to `renv` article](https://rstudio.github.io/renv/articles/renv.html) so you know how to use it.
+- `manuscript/`
+  - `Manuscript.qmd` and related files in Word/PDF output.
 
 
-# Getting started
+---
 
-This is a GitHub template repository. The best way to get it and start using it is [by following these steps.](https://help.github.com/en/articles/creating-a-repository-from-a-template)
+### `assets/`
 
-Once you got the repository, you can check out the examples by executing them in order. First run the processing code, which will produce the processed data. Then run the EDA scripts and analysis scripts, which will take the processed data and produce some results. 
+Contains supporting files:
 
-Once you (re-)generated the results, you can explore the products. Those Quarto files pull in the generated results and display them. These files also pull in references from the `BibTeX` file and format them according to the CSL style.
+- `dataanalysis-references.bib` — BibTeX references
+- `.csl` citation style files
+
+

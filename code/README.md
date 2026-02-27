@@ -1,12 +1,40 @@
 # code
 
-This folder and sub-folders should contain all your code. This can be R or Quarto files (or files for other programming languages). 
+This folder contains all scripts used for data processing and exploratory analysis of the lung cancer dataset.
 
-Place your files in the appropriate sub-folders. You can structure the folders as appropriate.
+## Folder structure and workflow
 
-You can either have fewer large scripts, or multiple scripts that do only specific actions. Those can be R or Quarto files (or some other language/format). In either case, document the scripts and what goes on in them so well that someone else (including future you) can easily figure out what is happening.
+### 1. processing-code/
 
-The scripts should load the appropriate data (e.g. raw or processed), perform actions, and save results (e.g. processed data, figures, computed values) in the appropriate folders. Document somewhere what inputs each script takes and where output is placed. 
+Scripts in this folder perform data loading and cleaning.
 
-If scripts need to be run in a specific order, document this. Either as comments in the script, or in a separate text file such as this readme file. Ideally of course in both locations.
+- **01_load_clean.R**
+  - Input: `data/raw-data/lung_cancer.csv`
+  - Actions: Loads raw data, converts variable types, performs basic cleaning.
+  - Output: Cleaned dataset saved to `data/processed-data/lung_clean.rds`
+
+---
+
+### 2. eda-code/
+
+Scripts in this folder perform exploratory data analysis.
+
+- **02_eda_plots_tables.R**
+  - Input: `data/processed-data/lung_clean.rds`
+  - Actions: Computes summary statistics, generates tables and figures.
+  - Output:
+      - Tables saved to `results/tables/`
+      - Figures saved to `results/figures/`
+
+---
+
+## Order of execution
+
+To fully reproduce the analysis:
+
+1. Run scripts in `processing-code/` first.
+2. Then run scripts in `eda-code/`.
+3. Finally, render `Manuscript.qmd` in the `products/manuscript/` folder.
+
+All scripts are documented with comments describing their purpose, inputs, and outputs.
 
