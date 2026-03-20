@@ -88,7 +88,9 @@ The main hypotheses are:
 ## Planned analysis approach
 Exploratory data analysis was conducted to examine the distributions of key variables and identify potential patterns or relationships between age, smoking exposure, and lung cancer status. Summary statistics and simple visualizations were used to better understand the data and assess data quality.
 
-Following exploratory analysis, statistical modeling approaches will be applied to evaluate the association between age, smoking exposure, and lung cancer risk. Models will be used to assess the independent and combined effects of these predictors on lung cancer outcomes. Additional variables in the dataset may be considered in extended analyses as the project progresses, particularly in later stages of the course when multivariate and machine learning methods are introduced.
+Following exploratory analysis, statistical modeling approaches were applied to evaluate the association between age, smoking-related variables, and lung cancer risk. Both smoking status and cumulative smoking exposure (pack-years) were evaluated as predictors. Logistic regression models were used to assess the independent and combined effects of these predictors on lung cancer outcomes. Cumulative smoking exposure (pack-years) was specifically evaluated as a key predictor in multivariable models, as it provides a more detailed measure of smoking history compared to smoking status alone.
+
+Additional variables in the dataset may be considered in extended analyses as the project progresses, particularly in later stages of the course when multivariate and machine learning methods are introduced.
 
 
 ## Data acquisition
@@ -139,9 +141,9 @@ lung_data %>% select(age, pack_years, lung_cancer_risk, smoker, copd) %>% str()
 
 
 ## Statistical analysis
-At this stage of the project, the primary focus was on data cleaning and exploratory analysis. Descriptive statistics and graphical methods were used to examine distributions and identify potential relationships between lung cancer risk, age, and cumulative smoking exposure.
+At this stage of the project, the primary focus was on data cleaning, exploratory analysis and initial statistical modeling. Descriptive statistics and graphical methods were used to examine distributions and identify potential relationships between lung cancer risk, age, and cumulative smoking exposure.
 
-Formal statistical modeling, including logistic regression to evaluate independent and combined effects of predictors on lung cancer risk, will be conducted in subsequent stages of the project.
+Logistic regression models were applied to evaluate the association between age, smoking status, and cumulative smoking exposure (pack-years) with lung cancer risk.
 
 {{< pagebreak >}}
 
@@ -267,16 +269,39 @@ knitr::include_graphics(
 
 ## Basic statistical analysis
 
-_To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p<0.05 means statistical significance" interpretation is not valid._
+To further examine associations between predictors and lung cancer risk, logistic regression models were fitted. A bivariate model including age as the only predictor showed that age was significantly associated with lung cancer risk (β = 0.016, p < 0.001). This indicates that increasing age is associated with a higher probability of lung cancer. A multivariable model including both age and smoking status was also fitted. In this model, age remained a statistically significant predictor. Smoking status was also evaluated as a predictor of lung cancer risk. While smoking status showed a strong association in descriptive analysis, it resulted in an extremely large coefficient with a very large standard error and was not statistically significant (p = 0.92) in the regression model. This suggests instability in the model, likely due to strong separation in the smoking variable, as all individuals with lung cancer in this dataset were smokers. To better capture smoking-related effects, cumulative smoking exposure (pack-years) was used instead of smoking status in a multivariable model. In this model, both age and pack-years were strongly associated with lung cancer risk. Pack-years showed a large and statistically significant effect (β = 0.53, p < 0.001), indicating that greater cumulative smoking exposure substantially increases lung cancer risk.
+
+Overall, these results suggest that while smoking status is strongly associated with lung cancer, cumulative smoking exposure (pack-years) provides a more stable and informative predictor in regression modeling. To further illustrate this relationship, predicted lung cancer risk was evaluated as a function of cumulative smoking exposure while holding age constant at its median value (Figure 6). The probability of lung cancer increases sharply as pack-years increase, highlighting the strong effect of cumulative smoking exposure on disease risk.
+
+```{r}
+#| label: fig-age-model
+#| fig-cap: "Predicted probability of lung cancer risk by age."
+#| echo: false
+#| out-width: "65%"
+
+knitr::include_graphics(
+  here("results", "figures", "predicted_lung_cancer_risk_by_age.png")
+)
+```
 
 
+```{r}
+#| label: fig-packyears-model
+#| fig-cap: "Predicted lung cancer risk as a function of pack-years, with age held constant at its median value."
+#| echo: false
+#| out-width: "65%"
+
+knitr::include_graphics(
+  here("results", "figures", "predicted_lung_cancer_risk_by_packyears (at median age).png")
+)
+```
 
 ## Full analysis
 
+At this stage, the analysis focused on logistic regression models to evaluate associations between predictors and lung cancer risk. More advanced modeling approaches and model evaluation techniques will be explored in later stages of the project.
+
 _Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
 
-
-```
 
 
 {{< pagebreak >}}

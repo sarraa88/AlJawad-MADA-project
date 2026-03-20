@@ -28,13 +28,27 @@ Scripts in this folder perform exploratory data analysis.
 
 ---
 
+### 3. analysis-code/
+
+Scripts in this folder perform statistical modeling and analysis.
+
+- **statistical-analysis.R**
+  - Input: `data/processed-data/lung_clean.csv`
+  - Actions: Fits logistic regression models (bivariate and multivariable), generates predicted values, and saves model outputs.
+  - Output:
+      - Tables saved to `results/tables/`
+      - Figures saved to `results/figures/`
+
+---
+
 ## Order of execution
 
 To fully reproduce the analysis:
 
 1. Run scripts in `processing-code/` first.
 2. Then run scripts in `eda-code/`.
-3. Finally, render `Manuscript.qmd` in the `products/manuscript/` folder.
+3. Then run scripts in `analysis-code/`.
+4. Finally, render `Manuscript.qmd` in the `products/manuscript/` folder.
 
 All scripts are documented with comments describing their purpose, inputs, and outputs.
 
