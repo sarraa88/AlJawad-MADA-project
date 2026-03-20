@@ -13,5 +13,3 @@ This folder contains R scripts used to perform statistical analysis on the clean
   - Figures saved to `results/figures/`
 
 This script should be run after the exploratory analysis step in `eda-code/`.
-
-This script should be run after the exploratory analysis step in `eda-code/`.
