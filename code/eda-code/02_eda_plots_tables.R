@@ -2,13 +2,34 @@
 # 02_eda_plots_tables.R
 # Exploratory Data Analysis
 # =====================================
+# Purpose:
+# This script performs exploratory data analysis (EDA)
+# for the lung cancer dataset. It generates a summary
+# table and several exploratory figures to compare
+# age, smoking exposure, and smoking prevalence by
+# lung cancer risk group.
+#
+# Input:
+# data/processed-data/lung_clean.csv
+#
+# Output:
+# results/tables/summarytable.rds
+# results/figures/age_box.png
+# results/figures/packyears_box.png
+# results/figures/age_vs_packyears_scatter.png
+# results/figures/smoking_proportion.png
+###############################################
+# Load required packages
 
 library(tidyverse)
 library(here)
+library(scales)
 
 # -------------------------------
 # Load cleaned data
 # -------------------------------
+# Read the processed dataset created in the
+# data cleaning step.
 
 lung <- readr::read_csv(
   here("data","processed-data","lung_clean.csv")
@@ -18,9 +39,15 @@ lung <- readr::read_csv(
 dir.create(here("results","figures"), recursive = TRUE, showWarnings = FALSE)
 dir.create(here("results","tables"), recursive = TRUE, showWarnings = FALSE)
 
-# -------------------------------
-# Summary table by outcome
-# -------------------------------
+# --------------------------------------------
+# Summary table by lung cancer risk
+# --------------------------------------------
+# For each lung cancer risk group, calculate:
+# - number of observations
+# - median and IQR for age
+# - median and IQR for pack-years
+# - percentage of smokers
+# - percentage of COPD cases
 
 summary_tbl <- lung %>%
   group_by(lung_cancer_risk) %>%
@@ -34,22 +61,23 @@ summary_tbl <- lung %>%
     percent_COPD = mean(copd == "Yes") * 100
   )
 
+# Save summary table for use in manuscript
 saveRDS(summary_tbl,
         here("results","tables","summarytable.rds"))
 
 # -------------------------------
 # Plot 1: Age boxplot
 # -------------------------------
-
+# Boxplot comparing age between lung cancer risk groups.
 p_age_box <- ggplot(lung,
                     aes(x = lung_cancer_risk,
                         y = age,
                         fill = lung_cancer_risk)) +
   geom_boxplot(alpha = 0.7) +
-  labs(x = "Cancer risk",
+  labs(x = "Lung cancer risk",
        y = "Age") +
   theme(legend.position = "none")
-
+# Save age boxplot
 ggsave(here("results","figures","age_box.png"),
        p_age_box,
        width = 6,
@@ -59,16 +87,18 @@ ggsave(here("results","figures","age_box.png"),
 # -------------------------------
 # Plot 2: Pack-years boxplot
 # -------------------------------
-
+# Boxplot comparing cumulative smoking exposure
+# between lung cancer risk groups.
 p_pack_box <- ggplot(lung,
                      aes(x = lung_cancer_risk,
                          y = pack_years,
                          fill = lung_cancer_risk)) +
   geom_boxplot(alpha = 0.7) +
-  labs(x = "Cancer risk",
+  labs(x = "Lung cancer risk",
        y = "Pack-years") +
   theme(legend.position = "none")
 
+# Save pack-years boxplot
 ggsave(here("results","figures","packyears_box.png"),
        p_pack_box,
        width = 6,
@@ -89,6 +119,7 @@ p_age_pack_scatter <- lung %>%
   ) +
   theme_classic(base_size = 12)
 
+# Save scatter plot
 ggsave(
   here("results","figures","age_vs_packyears_scatter.png"),
   p_age_pack_scatter,
@@ -96,8 +127,9 @@ ggsave(
 # -------------------------------
 # Plot 4: Smoking prevalence by lung cancer risk
 # -------------------------------
-
-library(scales)
+# Stacked proportional bar plot showing the
+# percentage of smokers and non-smokers in each
+# lung cancer risk group.
 
 p_smoke_prop <- ggplot(lung,
                        aes(x = lung_cancer_risk,
@@ -111,6 +143,7 @@ p_smoke_prop <- ggplot(lung,
   theme_classic(base_size = 12) +
   theme(legend.position = "top")
 
+# Save smoking prevalence plot
 ggsave(here("results","figures","smoking_proportion.png"),
        p_smoke_prop,
        width = 6,

@@ -38,6 +38,12 @@ Scripts in this folder perform statistical modeling and analysis.
   - Output:
       - Tables saved to `results/tables/`
       - Figures saved to `results/figures/`
+- **part4_models.qmd**
+  - Input: `data/processed-data/lung_clean.csv`
+  - Action: Performs predictive modeling, model evaluation (accuracy, AUC), and generates comparison figures and tables.
+  - Output: 
+      - Tables saved to `results/tables/`
+      - Figures saved to `results/figures/`
 
 ---
 

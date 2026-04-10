@@ -32,13 +32,16 @@ Saraa Al Jawad
 
 
 
+
 {{< pagebreak >}}
 
 
 
 # Summary/Abstract
 
-Lung cancer remains one of the leading causes of cancer-related mortality worldwide, with age and smoking exposure recognized as major risk factors. Understanding how these factors contribute to lung cancer risk is essential for improving prevention strategies and risk assessment. In this study, we examine the relationship between age, cumulative smoking exposure, and lung cancer risk using a structured data analysis approach in R. Exploratory data analysis was performed to evaluate distributions, trends, and potential associations among variables, followed by statistical modeling to assess the independent and combined effects of age and smoking exposure on lung cancer outcomes. This analysis aims to determine whether increasing age and greater cumulative smoking exposure are associated with elevated lung cancer risk and to assess the relative strength of these factors.
+Lung cancer remains one of the leading causes of cancer-related mortality worldwide, with age and smoking exposure recognized as major risk factors. Understanding how these factors contribute to lung cancer risk is essential for improving prevention strategies and risk assessment. This analysis investigates the relationship between age, cumulative smoking exposure (pack-years), and lung cancer risk using a dataset of 5,000 individuals with demographic and clinical variables. Logistic regression models were used to assess associations between age, smoking status, cumulative smoking exposure (pack-years), and chronic obstructive pulmonary disease (COPD) with lung cancer risk. Model performance was evaluated using accuracy and area under the receiver operating characteristic curve (AUC). Results showed that both age and cumulative smoking exposure are positively associated with lung cancer risk. However, cumulative smoking exposure (pack-years), which accounts for both duration and intensity of smoking, provides a more stable and informative measure of risk than age or smoking status alone. Incorporating pack-years substantially improved predictive performance, with the AUC increasing from 0.886 to 0.992. While the inclusion of COPD further improved model performance, the gain was minimal.
+
+Overall, these findings demonstrate that while age contributes to lung cancer risk, cumulative smoking exposure plays a stronger role in prediction, highlighting the importance of accounting for long-term smoking behavior in risk assessment models.
 
 {{< pagebreak >}}
 
@@ -46,17 +49,27 @@ Lung cancer remains one of the leading causes of cancer-related mortality worldw
 # Introduction 
 
 ## General Background Information
-Lung cancer is one of the leading causes of cancer-related mortality worldwide and remains a major public health concern. Despite advances in screening and treatment, lung cancer often presents at advanced stages, leading to poor prognosis and high mortality rates. Identifying and understanding key risk factors is therefore essential for prevention efforts and early risk assessment.
+Lung cancer is one of the leading causes of cancer-related mortality worldwide and remains a major public health concern [@siegel2024]. Despite advances in screening and treatment, lung cancer often presents at advanced stages, leading to poor prognosis and high mortality rates. Identifying and understanding key risk factors is therefore essential for prevention efforts and early risk assessment.
 
-Approximately 85% of lung cancer cases occur in current or former smokers, underscoring the dominant role of tobacco exposure in disease development. Long-term cigarette smokers have been shown to face substantial cumulative risk of lung cancer by older ages, highlighting the strong dose–response relationship between smoking exposure and disease risk. Beyond smoking alone, risk prediction research has emphasized the importance of incorporating additional clinical and environmental factors to better estimate individual susceptibility. These findings support the need for structured risk assessment approaches that evaluate both smoking history and other relevant predictors when examining lung cancer risk [@spitz2007].
+Approximately 85% of lung cancer cases occur in current or former smokers, underscoring the dominant role of tobacco exposure in disease development [@thun2013; @jha2013]. Long-term cigarette smokers face a substantial cumulative risk of lung cancer, demonstrating a strong dose–response relationship between smoking exposure and disease risk. Beyond smoking alone, risk prediction research has emphasized the importance of incorporating additional clinical and environmental factors to better estimate individual susceptibility. These findings support the need for structured risk assessment approaches that evaluate both smoking history and other relevant predictors when examining lung cancer risk [@spitz2007].
 
-Age and smoking exposure are well-established risk factors for lung cancer. Risk increases with age due to cumulative biological changes and prolonged exposure to carcinogens over time. Similarly, greater cumulative smoking exposure is strongly associated with increased lung cancer incidence and remains the primary preventable risk factor. Examining these variables together allows for a clearer understanding of how they both contribute to disease risk.
+Age and smoking exposure are well-established risk factors for lung cancer. Risk increases with age due to cumulative biological changes and prolonged exposure to carcinogens over time. Similarly, greater cumulative smoking exposure is strongly associated with increased lung cancer incidence and remains the primary preventable risk factor. Examining these variables together allows for a clearer understanding of how they contribute to disease risk.
 
+In addition to these traditional risk factors, increasing evidence suggests that chronic respiratory diseases, particularly chronic obstructive pulmonary disease (COPD), play a significant role in lung cancer development. COPD is not only a common comorbidity in lung cancer patients but is also considered an independent risk factor for lung cancer, even after adjusting for smoking history [@durham2015; @young2009]. Individuals with impaired lung function or airflow obstruction have been shown to have a significantly higher likelihood of developing lung cancer compared to those with normal lung function. This relationship suggests that COPD and lung cancer may share common biological mechanisms rather than being solely linked through smoking exposure.
+
+Several underlying mechanisms have been proposed to explain this association. Chronic inflammation in COPD creates a pro-tumor microenvironment characterized by persistent immune activation and cytokine release, which can promote tumor initiation and progression. In addition, oxidative stress caused by cigarette smoke and inflammatory processes leads to DNA damage, genomic instability, and impaired DNA repair mechanisms, all of which contribute to carcinogenesis. Genetic susceptibility and epigenetic modifications further link the two diseases, with shared genetic loci and altered gene expression patterns observed in both COPD and lung cancer [@qi2022]. Moreover, only a subset of smokers develop either COPD or lung cancer, indicating that additional factors such as genetic predisposition, aging, and environmental influences play a critical role in disease development.
+
+## Smoking Exposure and Risk Measurement
+Smoking exposure is commonly quantified using pack-years, which integrates both the duration and intensity of smoking and provides a comprehensive measure of cumulative exposure. Epidemiological studies have shown that lung cancer risk is strongly associated with total smoking exposure, with approximately linear increases in risk observed with increasing pack-years [@kenfield2008]. The use of pack-years allows for a more accurate representation of cumulative risk compared to binary measures such as smoking status alone.
+
+Importantly, evidence suggests that for equivalent total exposure, smoking at lower intensity over a longer duration may be more harmful than higher-intensity smoking over a shorter period, highlighting the critical role of long-term exposure in lung cancer development [@lubin2006] . This finding emphasizes that both duration and cumulative exposure are essential components in understanding lung cancer risk and supports the use of pack-years as a key predictor in risk modeling.
+
+Together, these findings highlight the importance of integrating multiple predictors, such as age, cumulative smoking exposure, and additional clinical factors into analytical models to better capture the complexity of lung cancer risk and improve predictive performance. To investigate these relationships in the present study, we analyzed a dataset containing individual-level information on lung cancer risk factors and disease status.
 
 ## Description of data and data source
 The data used in this analysis consist of individual-level observations on lung cancer risk factors and disease status. The dataset contains 5,000 observations and 30 variables, including demographic characteristics, smoking-related variables, and clinical indicators.
 
-The primary variables of interest for this study are age, cumulative smoking exposure (pack-years), and lung cancer status. Additional variables such as smoking status and chronic obstructive pulmonary disease (COPD) are included for descriptive purposes.
+The primary variables of interest in this study are age, smoking status, cumulative smoking exposure (pack-years), and lung cancer status. COPD was included as an additional clinical variable to assess whether it provides further information beyond age and smoking exposure.
 
 
 
@@ -70,12 +83,12 @@ lung_data <- read.csv(
 ```
 
 ## Questions/Hypotheses to be addressed
-The primary research question of this analysis is whether age and cumulative smoking exposure are associated with lung cancer risk.This project seeks to examine how lung cancer risk varies across different age groups and levels of smoking exposure.
+The primary research question of this analysis is whether age and cumulative smoking exposure are associated with lung cancer risk. This project seeks to examine how lung cancer risk varies across different age groups and levels of smoking exposure.
 
 The main hypotheses are:
 1. Increasing age is associated with a higher risk of lung cancer.
 2. Greater cumulative smoking exposure is associated with an increased risk of lung cancer.
-3. Smoking exposure contributes more strongly to lung cancer risk than age when both factors are considered together.
+3. Cumulative smoking exposure contributes more strongly to lung cancer risk than age when both factors are considered together.
 
 
 
@@ -90,7 +103,7 @@ Exploratory data analysis was conducted to examine the distributions of key vari
 
 Following exploratory analysis, statistical modeling approaches were applied to evaluate the association between age, smoking-related variables, and lung cancer risk. Both smoking status and cumulative smoking exposure (pack-years) were evaluated as predictors. Logistic regression models were used to assess the independent and combined effects of these predictors on lung cancer outcomes. Cumulative smoking exposure (pack-years) was specifically evaluated as a key predictor in multivariable models, as it provides a more detailed measure of smoking history compared to smoking status alone.
 
-Additional variables in the dataset may be considered in extended analyses as the project progresses, particularly in later stages of the course when multivariate and machine learning methods are introduced.
+In an extended multivariable analysis, COPD was also evaluated as an additional clinical predictor to determine whether it contributed independent information beyond age and cumulative smoking exposure.
 
 
 ## Data acquisition
@@ -141,9 +154,16 @@ lung_data %>% select(age, pack_years, lung_cancer_risk, smoker, copd) %>% str()
 
 
 ## Statistical analysis
-At this stage of the project, the primary focus was on data cleaning, exploratory analysis and initial statistical modeling. Descriptive statistics and graphical methods were used to examine distributions and identify potential relationships between lung cancer risk, age, and cumulative smoking exposure.
+Descriptive statistics and graphical methods were used to examine distributions and identify potential relationships between lung cancer risk, age, and cumulative smoking exposure.
 
-Logistic regression models were applied to evaluate the association between age, smoking status, and cumulative smoking exposure (pack-years) with lung cancer risk.
+Logistic regression models were applied to evaluate the association of age, smoking status, cumulative smoking exposure (pack-years), and COPD with lung cancer risk. A final multivariable model including age, pack-years, and COPD was used to assess whether COPD provided additional predictive value beyond smoking exposure alone.
+
+
+## Predictive modeling and model evaluation
+
+To complement the statistical analysis, a predictive modeling workflow was implemented in R using the tidymodels framework. Logistic regression was used to compare three models with increasing complexity: (1) age and smoking status, (2) age and cumulative smoking exposure (pack-years), and (3) age, pack-years, and COPD. 
+
+The dataset was split into training (75%) and testing (25%) sets using stratified sampling based on lung cancer risk. Models were fitted on the training set and evaluated on the independent test set. Predictive performance was assessed using accuracy, sensitivity, specificity, and area under the receiver operating characteristic curve (AUC). In addition, 5-fold cross-validation was performed on the training data to assess model stability and reduce the risk of overfitting. Model performance metrics were computed on the test set to evaluate generalization performance. This approach allows for a consistent comparison of model performance and ensures that results are not driven by overfitting.
 
 {{< pagebreak >}}
 
@@ -156,7 +176,7 @@ Individuals with lung cancer were slightly older (median age 56 years) compared 
 
 Smoking exposure differed substantially between groups. The median cumulative smoking exposure (pack-years) among individuals without lung cancer was 0, whereas individuals with lung cancer had a median of 19 pack-years. This indicates markedly higher lifetime smoking exposure among those with lung cancer.
 
-The proportion of smokers was considerably higher in the lung cancer group compared to the non-cancer group. Similarly, the prevalence of chronic obstructive pulmonary disease (COPD) was substantially greater among individuals with lung cancer. 
+The proportion of smokers was considerably higher in the lung cancer group compared to the non-cancer group. Similarly, the prevalence of COPD was substantially greater among individuals with lung cancer. 
 
 Overall, smoking-related variables demonstrated more pronounced differences between groups than age alone.
 
@@ -269,9 +289,47 @@ knitr::include_graphics(
 
 ## Basic statistical analysis
 
-To further examine associations between predictors and lung cancer risk, logistic regression models were fitted. A bivariate model including age as the only predictor showed that age was significantly associated with lung cancer risk (β = 0.016, p < 0.001). This indicates that increasing age is associated with a higher probability of lung cancer. A multivariable model including both age and smoking status was also fitted. In this model, age remained a statistically significant predictor. Smoking status was also evaluated as a predictor of lung cancer risk. While smoking status showed a strong association in descriptive analysis, it resulted in an extremely large coefficient with a very large standard error and was not statistically significant (p = 0.92) in the regression model. This suggests instability in the model, likely due to strong separation in the smoking variable, as all individuals with lung cancer in this dataset were smokers. To better capture smoking-related effects, cumulative smoking exposure (pack-years) was used instead of smoking status in a multivariable model. In this model, both age and pack-years were strongly associated with lung cancer risk. Pack-years showed a large and statistically significant effect (β = 0.53, p < 0.001), indicating that greater cumulative smoking exposure substantially increases lung cancer risk.
+To further examine associations between predictors and lung cancer risk, logistic regression models were fitted. A model including age as the only predictor showed that age was significantly associated with lung cancer risk (β = 0.016, p < 0.001). This indicates that increasing age is associated with a higher probability of lung cancer. A multivariable model including both age and smoking status was also fitted. In this model, age remained a statistically significant predictor. Smoking status was also evaluated as a predictor of lung cancer risk. While smoking status showed a strong association in descriptive analysis, it resulted in an extremely large coefficient with a very large standard error and was not statistically significant (p = 0.92) in the regression model. This suggests instability in the model, likely due to strong separation in the smoking variable, as all individuals with lung cancer in this dataset were smokers. To better capture smoking-related effects, cumulative smoking exposure (pack-years) was used instead of smoking status in a multivariable model. In this model, both age and pack-years were strongly associated with lung cancer risk. Pack-years showed a large and statistically significant effect (β = 0.53, p < 0.001), indicating that greater cumulative smoking exposure substantially increases lung cancer risk.
 
 Overall, these results suggest that while smoking status is strongly associated with lung cancer, cumulative smoking exposure (pack-years) provides a more stable and informative predictor in regression modeling. To further illustrate this relationship, predicted lung cancer risk was evaluated as a function of cumulative smoking exposure while holding age constant at its median value (Figure 6). The probability of lung cancer increases sharply as pack-years increase, highlighting the strong effect of cumulative smoking exposure on disease risk.
+
+A further multivariable model including age, pack-years, and COPD showed that COPD was also significantly associated with lung cancer risk after adjustment for age and cumulative smoking exposure. In this model, individuals with COPD had substantially higher odds of lung cancer compared with those without COPD (OR = 5.30, 95% CI: 3.66–7.75, p < 0.001). Although the addition of COPD improved the model, cumulative smoking exposure remained the strongest predictor overall.
+
+```{r}
+#| label: tbl-regression
+#| tbl-cap: "summarizes the multivariable logistic regression results for age, pack-years, and COPD."
+#| echo: false
+
+reg_table <- readRDS(
+  here("results", "tables", "regression_table.rds")
+)
+
+reg_table <- reg_table %>%
+  mutate(
+    Odds_Ratio = round(Odds_Ratio, 2),
+    CI_lower = round(CI_lower, 2),
+    CI_upper = round(CI_upper, 2),
+    p_value = ifelse(p_value < 0.001, "<0.001", round(p_value, 3))
+  ) %>%   
+  mutate(
+    `95% CI` = paste0(CI_lower, "–", CI_upper)
+  ) %>%
+  select(Variable, Odds_Ratio, `95% CI`, p_value) %>%
+  rename(
+    `Odds Ratio` = Odds_Ratio,
+    `p-value` = p_value
+  )
+
+ft_reg <- flextable(reg_table)
+ft_reg <- autofit(ft_reg)
+ft_reg <- align(ft_reg, align = "center", part = "all")
+ft_reg <- bold(ft_reg, part = "header")
+
+ft_reg
+```
+
+
+
 
 ```{r}
 #| label: fig-age-model
@@ -296,27 +354,71 @@ knitr::include_graphics(
 )
 ```
 
-## Full analysis
 
-At this stage, the analysis focused on logistic regression models to evaluate associations between predictors and lung cancer risk. More advanced modeling approaches and model evaluation techniques will be explored in later stages of the project.
+## Full Analysis
 
-_Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
+### Predictive modeling results
 
+Three logistic regression models were evaluated to assess the contribution of smoking-related variables and COPD to lung cancer risk prediction. Model performance improved when cumulative smoking exposure (pack-years) was used instead of smoking status, indicating that pack-years provides a more informative measure of smoking-related risk. The AUC increased from 0.886 in the smoking status model to 0.992 in the pack-years model, demonstrating a marked gain in predictive ability.
 
+The addition of COPD to the model resulted in only a modest improvement in predictive performance compared to the model including age and pack-years alone. The inclusion of COPD led to only a minimal additional increase in AUC (0.993).
+
+These results suggest that cumulative smoking exposure is the primary driver of predictive performance, while COPD provides additional but limited improvement in prediction. The model including age and pack-years achieved the largest improvement in predictive performance, while the addition of COPD resulted in only marginal gains.
+
+```{r}
+#| label: tbl-model-comparison
+#| tbl-cap: "Comparison of predictive performance across logistic regression models."
+#| echo: false
+
+model_table <- readRDS(
+  here("results", "tables", "model_comparison_3.rds")
+)
+
+model_table <- model_table %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+
+ft_model <- flextable(model_table)
+ft_model <- autofit(ft_model)
+ft_model <- align(ft_model, align = "center", part = "all")
+ft_model <- bold(ft_model, part = "header")
+
+ft_model
+```
 
 {{< pagebreak >}}
 
+```{r}
+#| label: fig-roc
+#| fig-cap: "ROC curves for the three models"
+#| echo: false
+#| out-width: "70%"
+
+knitr::include_graphics(
+  here("results", "figures", "roc_comparison_3models.png")
+)
+```
+
+@fig-roc shows the ROC curves for the three models, illustrating the improvement in predictive performance when pack-years is used instead of smoking status, with only minimal additional gain from including COPD.
 
 # Discussion
 
 ## Summary and Interpretation
-_Summarize what you did, what you found and what it means._
+
+In this study, we evaluated the association between age, cumulative smoking exposure, and lung cancer risk using both statistical and predictive modeling approaches. The results consistently showed that cumulative smoking exposure (pack-years) is a strong and reliable predictor of lung cancer risk, outperforming smoking status alone. While age was also associated with increased risk, its effect was smaller compared to cumulative smoking exposure.
+
+The predictive modeling analysis further demonstrated that replacing smoking status with pack-years substantially improved model performance, as reflected by higher accuracy and AUC values. Although the inclusion of COPD provided additional predictive information, its contribution was relatively modest compared to pack-years. Overall, these findings highlight the importance of using detailed measures of smoking exposure when assessing lung cancer risk.
 
 ## Strengths and Limitations
-_Discuss what you perceive as strengths and limitations of your analysis._
+
+A key strength of this analysis is the use of multiple complementary approaches, including exploratory analysis, statistical modeling, and predictive modeling, to evaluate lung cancer risk factors. The use of cumulative smoking exposure (pack-years) enable for a more detailed and informative assessment of smoking-related risk compared to binary smoking status. Additionally, the implementation of train/test splitting and cross-validation improves the robustness of the predictive modeling results.
+
+However, several limitations should be considered. The dataset is observational, which limits the ability to draw causal conclusions. In addition, the smoking status exhibited strong separation, as all individuals with lung cancer were smokers, leading to instability in regression models using this variable alone. The analysis was also limited to the available variables and did not include other potential risk factors such as environmental exposures or genetic predisposition. Finally, the predictive models were relatively simple and may not capture more complex relationships present in the data.
 
 ## Conclusions
-_What are the main take-home messages?_
+
+This analysis demonstrates that cumulative smoking exposure is the primary driver of lung cancer risk and provides a more informative predictor than smoking status alone. While age contributes to risk, its effect is smaller relative to smoking exposure. The inclusion of COPD offers additional predictive value, but its contribution is limited compared to pack-years.
+
+These findings emphasize the importance of incorporating detailed smoking exposure measures in both statistical and predictive models for lung cancer risk assessment. Future work could explore additional predictors and more advanced modeling approaches to further improve risk prediction.
 
 
 
@@ -325,7 +427,10 @@ _What are the main take-home messages?_
 
 # Supplementary materials
 
-The raw data used in this analysis are stored in the project repository under `data/raw-data/`. All data processing, cleaning, and exploratory analyses were conducted using reproducible R scripts located in the `code/` directory. 
+The raw data used in this analysis are stored in the project repository under `data/raw-data/`. All data processing, cleaning, and analyses were conducted using reproducible R scripts located in the `code/` directory.
+
+Processed datasets, figures, and tables generated during the analysis are available in the `data/processed-data/` and `results/` directories.
+
 
 
 # References

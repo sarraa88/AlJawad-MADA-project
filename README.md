@@ -46,11 +46,11 @@ Each dataset can be regenerated using scripts in the `code/` folder.
 Contains all code used in this project.
 
 - `processing-code/`
-  - To loads and cleans the raw dataset.
+  - To load and clean the raw dataset.
 - `eda-code/`
   - To produces summary tables and exploratory figures.
 - `analysis-code/`
-  - For statistical modeling scripts.
+  - Scripts for statistical and predictive modeling
 
 Each subfolder also includes a `README.md` describing purpose and workflow.
 
@@ -86,3 +86,8 @@ Contains supporting files:
 - `.csl` citation style files
 
 
+### Reproducibility
+
+Detailed instructions for running the analysis workflow are provided in:
+
+`code/README.md`

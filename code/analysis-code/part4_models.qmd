@@ -1,0 +1,551 @@
+---
+title: "Part 4 Models"
+format: html
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+
+This analysis was conducted using R and the tidymodels framework to evaluate predictive models for lung cancer risk. The workflow includes data preprocessing, model training, evaluation, and comparison across multiple models.
+
+To ensure reproducibility:
+
+- Data were split into training (75%) and testing (25%) sets using stratified sampling based on the outcome variable.
+- Models were trained exclusively on the training data and evaluated on an independent test set.
+- Model performance was assessed using accuracy, sensitivity, specificity, and area under the ROC curve (AUC).
+- 5-fold cross-validation was used to estimate model stability.
+- All code, data paths, and outputs are organized using a structured project directory via the `here()` package.
+
+The analysis includes three models:
+1. Age + Smoking Status
+2. Age + Pack-Years (smoking exposure over time)
+3. Age + Pack-Years + COPD
+
+All results, tables, and figures can be reproduced by running this document from start to finish.
+
+```{r}
+# Load required libraries 
+library(tidyverse)
+library(tidymodels)
+library(here)
+
+set.seed(1234)
+```
+
+
+```{r}
+lung_data <- readr::read_csv(
+  here("data", "processed-data", "lung_clean.csv")
+)
+```
+
+
+```{r}
+# Inspect structure and basic distributions
+glimpse(lung_data)
+table(lung_data$lung_cancer_risk)
+table(lung_data$smoker)
+table(lung_data$copd)
+```
+
+```{r}
+# Convert categorical variables to factors for modeling
+lung_data <- lung_data %>%
+  mutate(
+    lung_cancer_risk = factor(lung_cancer_risk),
+    smoker = factor(smoker),
+    copd = factor(copd)
+  )
+```
+
+```{r}
+glimpse(lung_data)
+```
+
+
+```{r}
+set.seed(1234)
+# Split data into training (75%) and testing (25%) sets
+data_split <- initial_split(
+  lung_data,
+  prop = 0.75,
+  strata = lung_cancer_risk
+)
+
+train_data <- training(data_split)
+test_data  <- testing(data_split)
+```
+
+
+```{r}
+nrow(train_data)
+nrow(test_data)
+
+table(train_data$lung_cancer_risk)
+table(test_data$lung_cancer_risk)
+```
+
+
+```{r}
+# Define logistic regression model for classification
+log_model <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+```
+
+
+```{r}
+# Build workflow using age and smoking status as predictors
+log_workflow <- workflow() %>%
+  add_model(log_model) %>%
+  add_formula(lung_cancer_risk ~ age + smoker)
+```
+
+
+```{r}
+# Fit model on training data
+log_fit <- fit(log_workflow, data = train_data)
+```
+
+
+```{r}
+tidy(log_fit)
+```
+
+
+```{r}
+# Generate class predictions and probabilities on test data
+test_pred_class <- predict(log_fit, new_data = test_data)
+test_pred_prob  <- predict(log_fit, new_data = test_data, type = "prob")
+```
+
+
+```{r}
+test_results <- bind_cols(
+  test_data %>% select(lung_cancer_risk),
+  test_pred_class,
+  test_pred_prob
+)
+```
+
+
+```{r}
+head(test_results)
+```
+
+
+```{r}
+# Evaluate model performance using accuracy and confusion matrix
+accuracy(test_results, truth = lung_cancer_risk, estimate = .pred_class)
+conf_mat(test_results, truth = lung_cancer_risk, estimate = .pred_class)
+```
+
+
+```{r}
+# Compute sensitivity and specificity
+sens(test_results, truth = lung_cancer_risk, estimate = .pred_class)
+spec(test_results, truth = lung_cancer_risk, estimate = .pred_class)
+```
+
+
+```{r}
+# Compute AUC
+roc_auc(
+  test_results,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+)
+```
+
+```{r}
+# Generate ROC curve data and plot
+roc_curve_data <- roc_curve(
+  test_results,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+)
+
+autoplot(roc_curve_data)
+```
+
+```{r}
+# Perform 5-fold cross-validation on training data
+cv_folds <- vfold_cv(
+  train_data,
+  v = 5,
+  strata = lung_cancer_risk
+)
+
+cv_folds
+```
+
+
+```{r}
+# Fit model across folds and compute metrics
+cv_results_model1 <- fit_resamples(
+  log_workflow,
+  resamples = cv_folds,
+  metrics = metric_set(accuracy, sens, spec)
+)
+```
+
+
+```{r}
+collect_metrics(cv_results_model1)
+```
+
+
+```{r}
+# Build second model using cumulative smoking exposure (pack-years)
+log_workflow_pack <- workflow() %>%
+  add_model(log_model) %>%
+  add_formula(lung_cancer_risk ~ age + pack_years)
+```
+
+
+```{r}
+# Fit model
+log_fit_pack <- fit(log_workflow_pack, data = train_data)
+```
+
+
+```{r}
+tidy(log_fit_pack)
+```
+
+
+```{r}
+# Generate predictions for Model 2
+test_pred_class_pack <- predict(log_fit_pack, new_data = test_data)
+test_pred_prob_pack  <- predict(log_fit_pack, new_data = test_data, type = "prob")
+```
+
+
+```{r}
+# Combine results
+test_results_pack <- bind_cols(
+  test_data %>% select(lung_cancer_risk),
+  test_pred_class_pack,
+  test_pred_prob_pack
+)
+```
+
+
+```{r}
+# Evaluate performance
+accuracy(test_results_pack, truth = lung_cancer_risk, estimate = .pred_class)
+
+sens(test_results_pack, truth = lung_cancer_risk, estimate = .pred_class)
+
+spec(test_results_pack, truth = lung_cancer_risk, estimate = .pred_class)
+```
+
+
+```{r}
+roc_auc(
+  test_results_pack,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+)
+```
+
+
+```{r}
+roc_curve_data_pack <- roc_curve(
+  test_results_pack,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+)
+
+autoplot(roc_curve_data_pack)
+```
+
+
+```{r}
+cv_results_model2 <- fit_resamples(
+  log_workflow_pack,
+  resamples = cv_folds,
+  metrics = metric_set(accuracy, sens, spec)
+)
+
+collect_metrics(cv_results_model2)
+```
+
+```{r}
+acc_m1  <- accuracy(test_results, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+sens_m1 <- sens(test_results, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+spec_m1 <- spec(test_results, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+auc_m1  <- roc_auc(test_results, truth = lung_cancer_risk, .pred_Yes, event_level = "second") %>% pull(.estimate)
+
+acc_m2  <- accuracy(test_results_pack, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+sens_m2 <- sens(test_results_pack, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+spec_m2 <- spec(test_results_pack, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+auc_m2  <- roc_auc(test_results_pack, truth = lung_cancer_risk, .pred_Yes, event_level = "second") %>% pull(.estimate)
+```
+
+```{r}
+cv_m1 <- collect_metrics(cv_results_model1)
+cv_m2 <- collect_metrics(cv_results_model2)
+```
+
+```{r}
+cv_acc_m1  <- cv_m1 %>% filter(.metric == "accuracy") %>% pull(mean)
+cv_sens_m1 <- cv_m1 %>% filter(.metric == "sens") %>% pull(mean)
+cv_spec_m1 <- cv_m1 %>% filter(.metric == "spec") %>% pull(mean)
+
+cv_acc_m2  <- cv_m2 %>% filter(.metric == "accuracy") %>% pull(mean)
+cv_sens_m2 <- cv_m2 %>% filter(.metric == "sens") %>% pull(mean)
+cv_spec_m2 <- cv_m2 %>% filter(.metric == "spec") %>% pull(mean)
+```
+
+```{r}
+# Create summary table comparing both models (test + CV performance)
+model_comparison <- tibble(
+  Model = c("Age + smoker", "Age + pack_years"),
+  Test_Accuracy = c(acc_m1, acc_m2),
+  Test_Sensitivity = c(sens_m1, sens_m2),
+  Test_Specificity = c(spec_m1, spec_m2),
+  Test_AUC = c(auc_m1, auc_m2),
+  CV_Accuracy = c(cv_acc_m1, cv_acc_m2),
+  CV_Sensitivity = c(cv_sens_m1, cv_sens_m2),
+  CV_Specificity = c(cv_spec_m1, cv_spec_m2)
+)
+
+model_comparison
+```
+
+
+```{r}
+# Save full comparison table
+write.csv(
+  model_comparison,
+  here("results", "tables", "model_comparison.csv"),
+  row.names = FALSE
+)
+```
+
+```{r}
+model_comparison_clean <- model_comparison %>%
+  mutate(
+    Model = c("Age + Smoking Status", "Age + Pack-Years")
+  ) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+# Save cleaned (rounded) version for reporting
+write.csv(
+  model_comparison_clean,
+  here("results", "tables", "model_comparison_clean.csv"),
+  row.names = FALSE
+)
+```
+
+```{r}
+model_summary_table <- tibble(
+  Model = c("Age + Smoking Status", "Age + Pack-Years"),
+  Accuracy = c(acc_m1, acc_m2),
+  Sensitivity = c(sens_m1, sens_m2),
+  Specificity = c(spec_m1, spec_m2),
+  AUC = c(auc_m1, auc_m2)
+) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+# Save final summary table as RDS
+saveRDS(
+  model_summary_table,
+  here("results", "tables", "model_summary_table.rds")
+)
+```
+
+```{r}
+model_summary_table
+```
+
+
+```{r}
+# Save ROC curves for each model and combined comparison
+
+roc_plot_m1 <- autoplot(roc_curve_data)
+
+roc_plot_m1
+
+ggsave(
+  filename = here("results", "figures", "roc_model1.png"),
+  plot = roc_plot_m1,
+  width = 6,
+  height = 5
+)
+
+roc_plot_m2 <- autoplot(roc_curve_data_pack)
+
+roc_plot_m2
+
+ggsave(
+  filename = here("results", "figures", "roc_model2.png"),
+  plot = roc_plot_m2,
+  width = 6,
+  height = 5
+)
+
+roc_curve_data$model <- "Model 1"
+roc_curve_data_pack$model <- "Model 2"
+
+roc_combined <- bind_rows(roc_curve_data, roc_curve_data_pack)
+
+ggplot(roc_combined, aes(x = 1 - specificity, y = sensitivity, color = model)) +
+  geom_line(linewidth = 1) +
+  geom_abline(lty = 2) +
+  labs(title = "ROC Curve Comparison", color = "Model") +
+  theme_minimal()
+
+ggsave(
+  here("results", "figures", "roc_comparison.png"),
+  width = 6,
+  height = 5
+)
+```
+
+
+```{r}
+# Model 3: include COPD
+log_workflow_copd <- workflow() %>%
+  add_model(log_model) %>%
+  add_formula(lung_cancer_risk ~ age + pack_years + copd)
+
+# Fit model
+log_fit_copd <- fit(log_workflow_copd, data = train_data)
+```
+
+```{r}
+tidy(log_fit_copd)
+```
+
+
+```{r}
+test_pred_class_copd <- predict(log_fit_copd, new_data = test_data)
+test_pred_prob_copd  <- predict(log_fit_copd, new_data = test_data, type = "prob")
+
+test_results_copd <- bind_cols(
+  test_data %>% select(lung_cancer_risk),
+  test_pred_class_copd,
+  test_pred_prob_copd
+)
+```
+
+
+```{r}
+# Check results
+head(test_results_copd)
+```
+
+
+```{r}
+# Evaluate test-set performance
+
+# Accuracy
+accuracy(test_results_copd, truth = lung_cancer_risk, estimate = .pred_class)
+
+# Sensitivity
+sens(test_results_copd, truth = lung_cancer_risk, estimate = .pred_class)
+
+# Specificity
+spec(test_results_copd, truth = lung_cancer_risk, estimate = .pred_class)
+
+# AUC
+roc_auc(
+  test_results_copd,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+)
+```
+
+
+```{r}
+# Confusion matrix
+conf_mat(test_results_copd, truth = lung_cancer_risk, estimate = .pred_class)
+```
+
+```{r}
+cv_results_model3 <- fit_resamples(
+  log_workflow_copd,
+  resamples = cv_folds,
+  metrics = metric_set(accuracy, sens, spec)
+)
+
+collect_metrics(cv_results_model3)
+```
+
+```{r}
+# Extract Model 3 test metrics
+acc_m3  <- accuracy(test_results_copd, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+sens_m3 <- sens(test_results_copd, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+spec_m3 <- spec(test_results_copd, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+auc_m3  <- roc_auc(test_results_copd, truth = lung_cancer_risk, .pred_Yes, event_level = "second") %>% pull(.estimate)
+
+# Create 3-model comparison table (with Sensitivity)
+model_comparison_3 <- tibble(
+  Model = c("Age + Smoking Status", "Age + Pack-Years", "Age + Pack-Years + COPD"),
+  Accuracy = c(acc_m1, acc_m2, acc_m3),
+  Sensitivity = c(sens_m1, sens_m2, sens_m3),
+  Specificity = c(spec_m1, spec_m2, spec_m3),
+  AUC = c(auc_m1, auc_m2, auc_m3)
+) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+
+# Show table
+model_comparison_3
+
+# Save CSV
+write.csv(
+  model_comparison_3,
+  here("results", "tables", "model_comparison_3.csv"),
+  row.names = FALSE
+)
+
+# Save RDS
+saveRDS(
+  model_comparison_3,
+  here("results", "tables", "model_comparison_3.rds")
+)
+```
+
+```{r}
+# Add model labels
+roc_curve_data$model <- "Model 1"
+roc_curve_data_pack$model <- "Model 2"
+
+# Create ROC for Model 3
+roc_curve_data_copd <- roc_curve(
+  test_results_copd,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+)
+
+roc_curve_data_copd$model <- "Model 3"
+
+# Combine all three
+roc_combined <- bind_rows(
+  roc_curve_data,
+  roc_curve_data_pack,
+  roc_curve_data_copd
+)
+
+# Plot
+ggplot(roc_combined, aes(x = 1 - specificity, y = sensitivity, color = model)) +
+  geom_line(linewidth = 1) +
+  geom_abline(lty = 2) +
+  labs(title = "ROC Curve Comparison", color = "Model") +
+  theme_minimal()
+
+# Save
+ggsave(
+  here("results", "figures", "roc_comparison_3models.png"),
+  width = 6,
+  height = 5
+)
+```

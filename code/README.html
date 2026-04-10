@@ -83,6 +83,33 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <hr>
 </section>
+<section id="analysis-code" class="level3">
+<h3 class="anchored" data-anchor-id="analysis-code">3. analysis-code/</h3>
+<p>Scripts in this folder perform statistical modeling and analysis.</p>
+<ul>
+<li><strong>statistical-analysis.R</strong>
+<ul>
+<li>Input: <code>data/processed-data/lung_clean.csv</code></li>
+<li>Actions: Fits logistic regression models (bivariate and multivariable), generates predicted values, and saves model outputs.</li>
+<li>Output:
+<ul>
+<li>Tables saved to <code>results/tables/</code></li>
+<li>Figures saved to <code>results/figures/</code></li>
+</ul></li>
+</ul></li>
+<li><strong>part4_models.qmd</strong>
+<ul>
+<li>Input: <code>data/processed-data/lung_clean.csv</code></li>
+<li>Action: Performs predictive modeling, model evaluation (accuracy, AUC), and generates comparison figures and tables.</li>
+<li>Output:
+<ul>
+<li>Tables saved to <code>results/tables/</code></li>
+<li>Figures saved to <code>results/figures/</code></li>
+</ul></li>
+</ul></li>
+</ul>
+<hr>
+</section>
 </section>
 <section id="order-of-execution" class="level2">
 <h2 class="anchored" data-anchor-id="order-of-execution">Order of execution</h2>
@@ -90,6 +117,7 @@ ul.task-list li input[type="checkbox"] {
 <ol type="1">
 <li>Run scripts in <code>processing-code/</code> first.</li>
 <li>Then run scripts in <code>eda-code/</code>.</li>
+<li>Then run scripts in <code>analysis-code/</code>.</li>
 <li>Finally, render <code>Manuscript.qmd</code> in the <code>products/manuscript/</code> folder.</li>
 </ol>
 <p>All scripts are documented with comments describing their purpose, inputs, and outputs.</p>
