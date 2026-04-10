@@ -1,15 +1,17 @@
 # analysis-code
 
-This folder contains R scripts used to perform statistical analysis on the cleaned lung cancer dataset.
+This folder contains R scripts and Quarto file used to perform statistical analysis on the cleaned lung cancer dataset.
 
 ## Script description
 
 - Input: `data/processed-data/lung_clean.csv`
 - Actions:
-  - Fits logistic regression models to examine associations between predictors and lung cancer risk
+  - Perfoms logistic regression models to examine associations between predictors and lung cancer risk. 
+  - Implements train/test splitting for model development and evaluation. 
+  - Evaluates model performance using accuracy, sensitivity, specificity, and AUC  
   - Generates summary tables and figures
 - Output:
   - Tables saved to `results/tables/`
   - Figures saved to `results/figures/`
 
-This script should be run after the exploratory analysis step in `eda-code/`.
+These should be run after the exploratory analysis step in `eda-code/`.
