@@ -23,6 +23,8 @@ The analysis includes three models:
 2. Age + Pack-Years (smoking exposure over time)
 3. Age + Pack-Years + COPD
 
+In addition, a LASSO model was implemented to evaluate the effect of regularization and compare predictive performance with the logistic regression models.
+
 All results, tables, and figures can be reproduced by running this document from start to finish.
 
 ```{r}
@@ -547,5 +549,109 @@ ggsave(
   here("results", "figures", "roc_comparison_3models.png"),
   width = 6,
   height = 5
+)
+```
+
+```{r}
+# ===============================
+# LASSO MODEL (based on Model 3)
+# ===============================
+
+library(glmnet)
+
+# Define LASSO model
+lasso_model <- logistic_reg(penalty = tune(), mixture = 1) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification")
+
+# Workflow (same predictors as Model 3)
+lasso_workflow <- workflow() %>%
+  add_model(lasso_model) %>%
+  add_formula(lung_cancer_risk ~ age + pack_years + copd)
+
+# ===============================
+# Tuning with Cross-Validation
+# ===============================
+
+set.seed(1234)
+
+lasso_tuned <- tune_grid(
+  lasso_workflow,
+  resamples = cv_folds,   # same CV you already created
+  grid = 10,
+  metrics = metric_set(accuracy, roc_auc)
+)
+
+# View results
+collect_metrics(lasso_tuned)
+```
+
+```{r}
+# Select best penalty based on AUC
+best_lasso <- select_best(lasso_tuned, metric = "roc_auc")
+
+best_lasso
+```
+
+```{r}
+# Finalize workflow with best penalty
+final_lasso <- finalize_workflow(lasso_workflow, best_lasso)
+
+# Fit on training data
+lasso_fit <- fit(final_lasso, data = train_data)
+```
+
+```{r}
+# Predictions
+lasso_pred_class <- predict(lasso_fit, new_data = test_data)
+lasso_pred_prob  <- predict(lasso_fit, new_data = test_data, type = "prob")
+
+# Combine results
+lasso_results <- bind_cols(
+  test_data %>% select(lung_cancer_risk),
+  lasso_pred_class,
+  lasso_pred_prob
+)
+
+# Metrics
+accuracy(lasso_results, truth = lung_cancer_risk, estimate = .pred_class)
+
+roc_auc(
+  lasso_results,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+)
+```
+
+```{r}
+lasso_acc <- accuracy(lasso_results, truth = lung_cancer_risk, estimate = .pred_class) %>% pull(.estimate)
+
+lasso_auc <- roc_auc(
+  lasso_results,
+  truth = lung_cancer_risk,
+  .pred_Yes,
+  event_level = "second"
+) %>% pull(.estimate)
+
+comparison_final <- tibble(
+  Model = c("Logistic (Model 3)", "LASSO"),
+  Accuracy = c(acc_m3, lasso_acc),
+  AUC = c(auc_m3, lasso_auc)
+)
+
+comparison_final
+```
+
+```{r}
+write.csv(
+  comparison_final,
+  here("results", "tables", "final_model_comparison.csv"),
+  row.names = FALSE
+)
+
+saveRDS(
+  comparison_final,
+  here("results", "tables", "final_model_comparison.rds")
 )
 ```

@@ -1,7 +1,8 @@
 
-# Lung Cancer Risk Analysis  
-Saraa Al-Jawad  
-Modern Applied Data Analysis (MADA)
+# Lung Cancer Risk Analysis
+
+**Author:** Saraa Al-Jawad  
+**Course:** Modern Applied Data Analysis (MADA)
 
 This repository contains my cumulative course project in Dr. Andreas Handel's Modern Applied Data Analysis course.
 
@@ -11,11 +12,15 @@ This project investigates factors associated with lung cancer risk using a datas
 
 The dataset contains demographic, clinical, and smoking-related variables.  
 
+The analysis integrates exploratory data analysis, statistical modeling, and predictive modeling to examine relationships between lung cancer risk and key predictors, including age, cumulative smoking exposure (pack-years), and COPD.
+
 The project includes:
 
 - Data cleaning and preprocessing
 - Exploratory data analysis (EDA)
 - Descriptive and statistical modeling
+- Predictive modeling (logistic regression and LASSO)
+- Cross-validation and model evaluation
 - Fully reproducible workflow implementation
 
 The goal is to examine potential associations between lung cancer and relevant predictors in a fully reproducible workflow.

@@ -49,17 +49,24 @@ ul.task-list li input[type="checkbox"] {
 
 
 <section id="products" class="level1">
-<h1>products</h1>
+<h1>Products</h1>
 <p>This folder contains the final outputs of the lung cancer risk analysis project.</p>
 <section id="subfolders" class="level2">
 <h2 class="anchored" data-anchor-id="subfolders">Subfolders</h2>
 <ul>
+<li><code>report/</code>
+<ul>
+<li>Contains the Quarto report (<code>report.qmd</code>) and the rendered HTML output.</li>
+<li>This provides a web-based presentation of the analysis, structured in a standard scientific format.</li>
+</ul></li>
 <li><code>manuscript/</code>
 <ul>
-<li>Contains the Quarto manuscript (<code>Manuscript.qmd</code>) and supplementary material.</li>
-<li>This is the main project product.</li>
+<li>Contains the Quarto manuscript (<code>Manuscript.qmd</code>) and associated output files (e.g., Word).</li>
+<li>This presents the analysis in a manuscript-style format suitable for written reporting.</li>
 </ul></li>
 </ul>
+<p>Both formats integrate results from the full analysis pipeline, including descriptive analysis, statistical modeling, and predictive modeling.</p>
+<p>All outputs in this folder are generated programmatically and can be reproduced by running the analysis scripts and rendering the corresponding Quarto documents.</p>
 </section>
 </section>
 

@@ -11,7 +11,7 @@ Scripts in this folder perform data loading and cleaning.
 - **01_load_clean.R**
   - Input: `data/raw-data/lung_cancer.csv`
   - Actions: Loads raw data, converts variable types, performs basic cleaning.
-  - Output: Cleaned dataset saved to `data/processed-data/lung_clean.rds`
+  - Output: Cleaned dataset saved to `data/processed-data/lung_clean.csv`
 
 ---
 
