@@ -1,0 +1,112 @@
+---
+title: Project Review 5
+author: Rebecca Basta
+date: 04/30/2026
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Overview
+
+**Project:** "Assessing the Role of Age and Cumulative Smoking Exposure in Lung Cancer Risk"
+
+**Authors:** Saraa Al Jawad
+
+**Project reviewer:** Rebecca Basta
+
+# Instructions
+
+# Specific project content evaluation
+
+## Background, Context and Motivation
+
+### Feedback and Comments
+The project is well strcutured and has all the components for evaluation. The Manuscript.qmd file is rendering nicely into docx file. I recommend including a "How to Run" section in your README file, so it is easier to follow steps to reproduce your project. Other than that, the manuscript is written very well, inclding all the necessary infomration to understand what you are doing throughout your project. I also enjoyed looking at the figures in your manuscript. 
+
+### Summary assessment
+* strong contextualization and motivation
+
+## Question description
+### Feedback and Comments
+The research question is clearly defined as evaluating the association between age, cumulative smoking exposure, and risk of lung caner. The hypotheses are stated through the modeling approach. The relationship between the question and the data is appropriate and clear, as the dataset contains both cumulative smoking exposre exposure variables, age variables, and lung cancer outcomes.
+
+### Summary assessment
+* question/hypotheses fully clear
+
+## Data description
+### Feedback and Comments
+The dataset is well described and the source is provided. There is a code book expaling what the data is and it is also mentioned in the manuscript in the "Description of Data section". 
+
+### Summary assessment
+* source and overall structure of data well explained
+
+## Data wrangling and exploratory analysis
+
+### Feedback and Comments
+The exploratory analysis provides enough data and figures to have a clear view of the raw dataset. The models were very interesting to look at. The EDA code was reproducible and everything was well explained.
+
+### Summary assessment
+* essentially no weaknesses in wrangling and exploratory component
+
+## Appropriateness of Analysis
+
+### Feedback and Comments
+The analysis used were appropriate. The use of LASSO model is appropriate and well implemented.
+The use of logistic regression is appropriate for assessing adjusted associations between age, cumulative smoking exposure, and risk of lung cnacer. The use of ROC curve comparison as a performance metric is appropriate.
+### Summary assessment
+* strong and reasonable analysis
+
+## Presentation
+
+### Feedback and Comments
+The manuscript is well written, it includes figures with a clear explanations. The repository is nicely polished and orgnaized. The only issue I found is that not all README files are updated and include all the details about the different folders or how to run the code. Results are clearly presented with appropriate use of ROC curves. Figures show model performance and limitations.
+
+### Summary assessment
+* results are very well presented
+
+## Discussion/Conclusions
+
+### Feedback and Comments
+The manuscript is well written and explanations are clear. The discussion interprets findings properly. The discussion of model performance is strong and consistent with the results. Limitations are acknowledged.
+
+### Summary assessment
+* strong, complete and clear discussion
+
+## Further comments
+
+# Overall project content evaluation
+
+## Structure
+
+### Feedback and Comments
+The project is well structured and organized. There are no unnecessary files and everything is labeled. 
+
+### Summary assessment
+* well structured
+
+## Documentation 
+
+### Feedback and Comments
+Theproject is documented well. The manuscript provides clear explanations of models results. The workflow is understandable and easy to follow.
+
+### Summary assessment
+* fully and well documented
+
+## Reproducibility
+
+### Feedback and Comments
+Everything is reproducible. As mentioned previosuly, I think that having a "How to Run" section in the README files would be very helpful.
+
+### Summary assessment
+* fully reproducible without issues
+
+## Thoroughness
+
+### Feedback and Comments
+The project seemed to be thorough, the study explores different analytical approaches, including descriptive analysis, Logistic regression, and LASSO models.
+
+### Summary assessment
+* strong level of thorougness
