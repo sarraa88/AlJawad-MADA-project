@@ -1,0 +1,114 @@
+---
+title: Project Review 5
+author: Liang Lai
+date: 05/03/2026
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Overview
+
+**Project:** "Assessing the Role of Age and Cumulative Smoking Exposure in Lung Cancer Risk"
+
+**Authors:** Saraa Al Jawad
+
+**Project reviewer:** Liang Lai
+
+# Instructions
+
+# Specific project content evaluation
+
+## Background, Context and Motivation
+
+### Feedback and Comments
+The project has a very clear and relevant public health motivation. The background explains why lung cancer risk prediction is important and gives useful context for age, smoking exposure, pack-years, and COPD. The introduction is well developed, easy to follow, and supported by appropriate references.
+
+### Summary assessment
+* strong contextualization and motivation
+
+## Question description
+
+### Feedback and Comments
+The research question is clear, interesting, and appropriate for the available data. The project asks whether age and cumulative smoking exposure are associated with lung cancer risk, and it also compares predictive performance across different models. This gives the project a strong analytical direction.
+
+### Summary assessment
+* question/hypotheses fully clear
+
+## Data description
+
+### Feedback and Comments
+The manuscript describes the dataset size, main variables, and outcome clearly. The processed dataset is also easy to locate in the repository, and the folder organization makes it straightforward to understand which files are raw and which are generated.
+
+### Summary assessment
+* source and overall structure of data well explained
+
+## Data wrangling and exploratory analysis
+
+### Feedback and Comments
+The data cleaning script is straightforward and readable. The EDA figures and summary table are useful for understanding the main patterns in age, pack-years, smoking status, and COPD.
+
+### Summary assessment
+* essentially no weaknesses in wrangling and exploratory component
+
+## Appropriateness of Analysis
+
+### Feedback and Comments
+The use of logistic regression is appropriate for a binary lung cancer outcome, and comparing models with smoking status, pack-years, and COPD is well motivated. The predictive modeling workflow with train/test split, cross-validation, ROC curves, and AUC is also appropriate. 
+
+### Summary assessment
+* strong and appropriate analysis
+
+## Presentation
+
+### Feedback and Comments
+The manuscript is well organized and easy to read. The tables and figures are clearly connected to the research question, and the results are presented in a logical order from descriptive analysis to regression and predictive modeling. The repository structure is also clear and polished.
+
+### Summary assessment
+* results are very well presented
+
+## Discussion/Conclusions
+
+### Feedback and Comments
+The discussion summarizes the main findings well and appropriately notes that smoking status causes instability because all lung cancer cases are smokers. The limitations section is useful and acknowledges the observational nature of the data.
+
+### Summary assessment
+* strong, complete and clear discussion
+
+## Further comments
+
+# Overall project content evaluation
+
+## Structure
+
+### Feedback and Comments
+The project structure is clean and follows the expected organization very well. Data, code, results, manuscript files, and assets are separated in a way that makes the project easy to navigate. Overall, the repository feels organized and polished.
+
+### Summary assessment
+* well structured
+
+## Documentation 
+
+### Feedback and Comments
+The project is well documented, especially in the manuscript and folder README files. The documentation would be even stronger with exact run commands, a complete package list, and more complete data source information. 
+
+### Summary assessment
+* fully and well documented
+
+## Reproducibility
+
+### Feedback and Comments
+The workflow is mostly reproducible because the scripts are organized in a clear order and use project-relative paths.
+
+### Summary assessment
+* fully reproducible without issues
+
+## Thoroughness
+
+### Feedback and Comments
+The project is thorough for the course project scope. It includes data cleaning, exploratory analysis, statistical modeling, predictive modeling, model comparison, and a final manuscript. The analysis is complete and thoughtful, and the small suggestions above would mainly make an already strong project easier to reproduce and interpret.
+
+### Summary assessment
+* strong level of thoroughness
