@@ -48,7 +48,7 @@ The research question is clearly stated and well aligned with the data and analy
 
 
 ## Data description
-How well is the data overall described? Is the source provided? Is a codebook or other meta-information available that makes it clear what the data is? 
+How well is the data overall described?  Is the source provided? Is a codebook or other meta-information available that makes it clear what the data is? 
 
 ### Feedback and Comments
 
